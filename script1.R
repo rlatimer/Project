@@ -10,6 +10,54 @@ initial <- import(here("data", "food_carbon_footprint_data.xlsx")) %>%
   clean_names() %>%
     as_tibble()
 
+#change ranking variable to numeric
+#filter out the top ten highest CO2/person/year
+subset <- initial %>% 
+  mutate(ranking = as.numeric(ranking)) %>% 
+  filter(ranking < 11 |country == "all"| country =="Canada"|country ==)
+
+#line plot work: CO2/person/year produced by country
+
+initial_longer <- topten %>%
+  pivot_longer(cols = 3:16,
+               names_to = "product",
+               values_to = "CO2_person_year")
+
+animal <- topten %>%
+  pivot_longer(cols = 3:9,
+               names_to = "product",
+               values_to = "CO2_person_year")
+
+non_animal <- topten %>%
+  pivot_longer(cols = 11:14,
+               names_to = "product",
+               values_to = "CO2_person_year")
+
+
+  #plot1: animal products
+#draft
+
+d1 <- animal %>% 
+  ggplot(aes(product, CO2_person_year, group=country)) +
+  geom_line(aes(color = country))
+
+d1
+
+
+#final
+
+  #plot2: non-animal products
+#draft
+
+#final
+
+  #plot3: difference between animal and non-animal products
+#draft
+
+#final
+
+
+#geographic plot work
 #bring in map
 country_data <- map_data("world") %>% 
   rename(country=region)
