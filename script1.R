@@ -6,6 +6,7 @@ library(here)
 library(maps)
 library(dplyr)
 library(gghighlight)
+library(plotly)
 
 initial <- import(here("data", "food_carbon_footprint_data.xlsx")) %>% 
   clean_names() %>%
@@ -43,6 +44,10 @@ non_animal <- subset %>%
                names_to = "product",
                values_to = "CO2_person_year")
 
+#create data that will appear with a hover
+tooltip_data <- tibble(x="", y=1,
+                       categories = as_factor(c("all", "Canada",  "Japan","USA")),
+                       text = c("average", "Canada",  "Japan","USA"))
 
   #plot1: animal products
 #draft
@@ -54,7 +59,7 @@ a1
 
 #final
 a2 <- animal %>% 
-  ggplot(aes(product, CO2_person_year, group=country)) +
+  ggplot(aes(product, CO2_person_year, group=country, text = row.names(animal))) +
   geom_line(aes(color = country), size = 2) +
   gghighlight(country == "all" |country == "USA" | country =="Canada"| country =="Japan", 
               unhighlighted_params = list(size = 1)) +
@@ -66,7 +71,8 @@ a2 <- animal %>%
        y = "Co2/person/year (in Kg)") +
   theme_minimal()
 a2
-
+#doesn't work yet
+ggplotly(a2, tooltip = "text")
 
   #plot2: non-animal products
 #draft
