@@ -20,7 +20,16 @@ subset <- initial %>%
 #line plot work: CO2/person/year produced by country
 
 initial_longer <- subset %>%
-  pivot_longer(cols = 3:16,
+  select("ranking", "country","total_animal_products", "total_nonanimal_products", 
+         "animal_nonanimal_difference") %>% 
+  pivot_longer(cols = 3:5,
+               names_to = "product",
+               values_to = "CO2_person_year")
+
+nadiff <- subset %>%
+  arrange(desc(animal_nonanimal_difference)) %>% 
+  select("ranking", "country", "animal_nonanimal_difference") %>% 
+  pivot_longer(cols = 3,
                names_to = "product",
                values_to = "CO2_person_year")
 
@@ -54,7 +63,7 @@ a2 <- animal %>%
   labs(title = "CO2/person/year for animal products",
        subtitle = "",
        x = "animal product",
-       y = "Co2/person/year (in 10,000lbs)") +
+       y = "Co2/person/year (in Kg)") +
   theme_minimal()
 a2
 
@@ -77,16 +86,39 @@ na2 <- non_animal %>%
   labs(title = "CO2/person/year for non-animal products",
        subtitle = "",
        x = "non-animal product",
-       y = "Co2/person/year (in 10,000lbs)") +
+       y = "Co2/person/year (in Kg)") +
   theme_minimal()
 na2
 
   #plot3: difference between animal and non-animal products
 #draft
-
+d1 <- nadiff %>% 
+  ggplot(aes(CO2_person_year, country)) +
+  geom_col(aes(fill = country))
+d1
 #final
+#need to sort by CO2
+#calculation for those 
+d2 <- nadiff %>% 
+  ggplot(aes(CO2_person_year, country)) +
+  geom_col(aes(fill = country)) +
+  geom_col(data = filter(nadiff, country == "all" |country == "USA"| 
+                           country == "Canada"|country =="Japan"),
+           fill = "#C55644") + 
+  scale_fill_viridis_d() +
+  labs(title = "Animal v. Non-Animal Products difference",
+       subtitle = "",
+       x = "Co2/person/year (Kg)",
+       y = "") +
+  theme_minimal()
+d2
 
-
+?reorder
+scale_x_discrete(expand = c(0, 0)) +
+  labs(title = "",
+       subtitle = "",
+       x = "",
+       y = "Co2/person/year (in Kg)") +
 #geographic plot work
 #bring in map
 country_data <- map_data("world") %>% 
