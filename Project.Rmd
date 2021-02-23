@@ -1,3 +1,12 @@
+---
+title: "EDLD652 Project"
+author: "Rachael Latimer"
+date: "2/22/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(rio)
 library(janitor)
@@ -7,7 +16,16 @@ library(maps)
 library(dplyr)
 library(gghighlight)
 library(plotly)
+```
 
+## Food Carbon Footprint
+
+As more information is available regarding the impact of carbon emissions on climate change, it is easier to see how our lifestyles impact our carbon footprint. These lifestyle choices range from our commute to what we have for lunch. These choices vary by country, culture, and individual. 
+The carbon footprint of the average consumption by food group has been calculated for at least 130 countries. These calculations are based on food balance sheets and population data available from the Food and Agriculture Organization of the United Nations (FAO).
+These visualizations intend to compare the dietary sources of CO2 of non-animal based products to animal-based products and the differences in the food production across countries.
+
+
+```{r data}
 initial <- import(here("data", "food_carbon_footprint_data.xlsx")) %>% 
   clean_names() %>%
     as_tibble()
@@ -45,11 +63,13 @@ non_animal <- subset %>%
                names_to = "product",
                values_to = "CO2_person_year")
 
-#create data that will appear with a hover
-tooltip_data <- tibble(x="", y=1,
-                       categories = as_factor(c("all", "Canada",  "Japan","USA")),
-                       text = c("average", "Canada",  "Japan","USA"))
 
+```
+
+## Plots - Initial Draft
+
+
+```{r plot drafts}
   #plot1: animal products
 #draft
 
@@ -58,7 +78,24 @@ a1 <- animal %>%
   geom_line(aes(color = country))
 a1
 
-#final
+  #plot2: non-animal products
+#draft
+na1 <- non_animal %>% 
+  ggplot(aes(product, CO2_person_year, group=country)) +
+  geom_line(aes(color = country))
+na1
+
+  #plot3: difference between animal and non-animal products
+#draft
+d1 <- nadiff %>% 
+  ggplot(aes(CO2_person_year, country)) +
+  geom_col(aes(fill = country))
+d1
+```
+
+## Animal Products
+```{r plot final animal}
+  #plot1: animal products
 a2 <- animal %>% 
   ggplot(aes(product, CO2_person_year, group=country)) +
   geom_line(aes(color = country), size = 2) +
@@ -72,17 +109,11 @@ a2 <- animal %>%
        y = "Co2/person/year (in Kg)") +
   theme_minimal()
 a2
+```
 
-#doesn't work as intended yet:
-ggplotly(a2, tooltip = "text")
-
+## Non-Animal Products
+```{r plot final non-animal}
   #plot2: non-animal products
-#draft
-na1 <- non_animal %>% 
-  ggplot(aes(product, CO2_person_year, group=country)) +
-  geom_line(aes(color = country))
-na1
-
 #final
 na2 <- non_animal %>% 
   ggplot(aes(product, CO2_person_year, group=country)) +
@@ -97,15 +128,17 @@ na2 <- non_animal %>%
        y = "Co2/person/year (in Kg)") +
   theme_minimal()
 na2
+```
+
+## Animal/Non-Animal Difference
+
+Difference between the CO2 production of animal product and non-animal product, over a year. A low value means that a larger proportion of the population feeds on plant products which have a better carbon emission footprint.
+```{r plot final difference}
 
   #plot3: difference between animal and non-animal products
-#draft
-d1 <- nadiff %>% 
-  ggplot(aes(CO2_person_year, country)) +
-  geom_col(aes(fill = country))
-d1
 #final
-
+#need to sort by CO2
+#calculation for those 
 d2 <- nadiff %>% 
   ggplot(aes(CO2_person_year, reorder(country, CO2_person_year))) +
   geom_col(aes(fill = country)) +
@@ -118,28 +151,7 @@ d2 <- nadiff %>%
        y = "") +
   theme_minimal()
 d2 + theme(legend.position = "none")
+```
 
 
-#geographic plot work
-#bring in map
-country_data <- map_data("world") %>% 
-  rename(country=region)
 
-#left join initial and country_data by country
-data_map<-full_join(initial, country_data)
-
-#maybe use a map type other than albers; mercator?
-#need outlines for all countries; full join? 
-#now countries without data are filled grey
-
-#plot of difference by country on map
-ggplot(data_map, aes(long, lat))+
-  geom_polygon(aes(group=group, color = "red", fill=animal_nonanimal_difference))
-               +coord_map("albers", at0 = 45.5, lat1 = 29.5)
-
-ggplot(initial, aes(total_animal_products,country)) +
-  geom_point(aes(color=ranking))
-  
-ggplot(initial, aes(total_animal_products,ranking)) +
-  geom_point() +
-  labs(title = "kg CO2 per person")
