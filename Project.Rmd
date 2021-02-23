@@ -30,8 +30,6 @@ initial <- import(here("data", "food_carbon_footprint_data.xlsx")) %>%
   clean_names() %>%
     as_tibble()
 
-#change ranking variable to numeric
-#filter out the top ten highest CO2/person/year
 subset <- initial %>% 
   mutate(ranking = as.numeric(ranking)) %>% 
   filter(ranking < 7 |country == "all"| country =="Canada"|country =="Japan"
@@ -137,8 +135,7 @@ Difference between the CO2 production of animal product and non-animal product, 
 
   #plot3: difference between animal and non-animal products
 #final
-#need to sort by CO2
-#calculation for those 
+
 d2 <- nadiff %>% 
   ggplot(aes(CO2_person_year, reorder(country, CO2_person_year))) +
   geom_col(aes(fill = country)) +
