@@ -16,7 +16,7 @@ initial <- import(here("data", "food_carbon_footprint_data.xlsx")) %>%
 #filter out the top ten highest CO2/person/year
 subset <- initial %>% 
   mutate(ranking = as.numeric(ranking)) %>% 
-  filter(ranking < 7 |country == "all"| country =="Canada"|country =="Japan"
+  filter(ranking < 7 |country == "average"| country =="Canada"|country =="Japan"
          |country == "Germany"|country =="Mexico"|country =="South Korea"|country =="China")
 
 #line plot work: CO2/person/year produced by country
@@ -57,7 +57,7 @@ a1
 a2 <- animal %>% 
   ggplot(aes(product, CO2_person_year, group=country)) +
   geom_line(aes(color = country), size = 1) +
-  gghighlight(country == "all" |country == "USA" | country =="Canada"| country =="Japan") +
+  gghighlight(country == "average" |country == "USA" | country =="Canada"| country =="Japan") +
   scale_color_viridis_d() +
   scale_x_discrete(expand = c(0, 0)) +
   labs(title = "CO2/person/year for animal products",
@@ -81,7 +81,7 @@ na1
 na2 <- non_animal %>% 
   ggplot(aes(product, CO2_person_year, group=country)) +
   geom_line(aes(color = country), size = 1) +
-  gghighlight(country == "all" |country == "USA" | country =="Canada"| country =="Japan") +
+  gghighlight(country == "average" |country == "USA" | country =="Canada"| country =="Japan") +
   scale_color_viridis_d() +
   scale_x_discrete(expand = c(0, 0)) +
   labs(title = "CO2/person/year for non-animal products",
@@ -104,7 +104,7 @@ d1
 d2 <- nadiff %>% 
   ggplot(aes(CO2_person_year, reorder(country, CO2_person_year))) +
   geom_col(aes(fill = country)) +
-  geom_col(data = filter(nadiff, country == "all" |country == "USA"),
+  geom_col(data = filter(nadiff, country == "average" |country == "USA"),
            fill = "#C55644") + 
   scale_fill_viridis_d() +
   labs(title = "Animal v. Non-Animal Products difference",
