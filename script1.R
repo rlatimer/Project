@@ -56,9 +56,8 @@ a1
 #final
 a2 <- animal %>% 
   ggplot(aes(product, CO2_person_year, group=country)) +
-  geom_line(aes(color = country), size = 2) +
-  gghighlight(country == "all" |country == "USA" | country =="Canada"| country =="Japan", 
-              unhighlighted_params = list(size = 1)) +
+  geom_line(aes(color = country), size = 1) +
+  gghighlight(country == "all" |country == "USA" | country =="Canada"| country =="Japan") +
   scale_color_viridis_d() +
   scale_x_discrete(expand = c(0, 0)) +
   labs(title = "CO2/person/year for animal products",
@@ -81,9 +80,8 @@ na1
 #final
 na2 <- non_animal %>% 
   ggplot(aes(product, CO2_person_year, group=country)) +
-  geom_line(aes(color = country), size = 2) +
-  gghighlight(country == "all" |country == "USA" | country =="Canada"| country =="Japan", 
-              unhighlighted_params = list(size = 1)) +
+  geom_line(aes(color = country), size = 1) +
+  gghighlight(country == "all" |country == "USA" | country =="Canada"| country =="Japan") +
   scale_color_viridis_d() +
   scale_x_discrete(expand = c(0, 0)) +
   labs(title = "CO2/person/year for non-animal products",
