@@ -45,11 +45,6 @@ non_animal <- subset %>%
                names_to = "product",
                values_to = "CO2_person_year")
 
-#create data that will appear with a hover
-tooltip_data <- tibble(x="", y=1,
-                       categories = as_factor(c("all", "Canada",  "Japan","USA")),
-                       text = c("average", "Canada",  "Japan","USA"))
-
   #plot1: animal products
 #draft
 
@@ -71,10 +66,10 @@ a2 <- animal %>%
        x = "animal product",
        y = "Co2/person/year (in Kg)") +
   theme_minimal()
-a2
+a2 
 
 #doesn't work as intended yet:
-ggplotly(a2, tooltip = "text")
+ggplotly(a2, tooltip = c("country","product","CO2_person_year"))
 
   #plot2: non-animal products
 #draft
@@ -98,6 +93,8 @@ na2 <- non_animal %>%
   theme_minimal()
 na2
 
+ggplotly(na2, tooltip = c("country","product","CO2_person_year"))
+
   #plot3: difference between animal and non-animal products
 #draft
 d1 <- nadiff %>% 
@@ -116,10 +113,12 @@ d2 <- nadiff %>%
        subtitle = "",
        x = "Co2/person/year (Kg)",
        y = "") +
-  theme_minimal()
-d2 + theme(legend.position = "none")
+  theme_minimal() +
+  theme(legend.position = "none")
+d2
+ggplotly(d2, tooltip = c("CO2_person_year"))
 
-
+#not currently using
 #geographic plot work
 #bring in map
 country_data <- map_data("world") %>% 

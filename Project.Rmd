@@ -106,7 +106,7 @@ a2 <- animal %>%
        x = "animal product",
        y = "Co2/person/year (in Kg)") +
   theme_minimal()
-a2
+ggplotly(a2, tooltip = c("country","product","CO2_person_year"))
 ```
 
 ## Non-Animal Products
@@ -125,7 +125,7 @@ na2 <- non_animal %>%
        x = "non-animal product",
        y = "Co2/person/year (in Kg)") +
   theme_minimal()
-na2
+ggplotly(na2, tooltip = c("country","product","CO2_person_year"))
 ```
 
 ## Animal/Non-Animal Difference
@@ -146,8 +146,9 @@ d2 <- nadiff %>%
        subtitle = "",
        x = "Co2/person/year (Kg)",
        y = "") +
-  theme_minimal()
-d2 + theme(legend.position = "none")
+  theme_minimal() +
+  theme(legend.position = "none")
+ggplotly(d2, tooltip = c("CO2_person_year"))
 ```
 
 
