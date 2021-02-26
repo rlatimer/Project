@@ -1,22 +1,83 @@
 ---
-title: "Project test"
+title: "Project"
 output: 
+#runtime: shiny
   flexdashboard::flex_dashboard:
     orientation: columns
     vertical_layout: fill
+    source_code: https://github.com/rlatimer/Project.git
 ---
 
 ```{r setup, include=FALSE}
 library(flexdashboard)
+library(shiny)
+library(tidyverse)
+library(rio)
+library(janitor)
+library(ggplot2)
+library(here)
+library(maps)
+library(dplyr)
+library(gghighlight)
+library(plotly)
 ```
+Data Source {.sidebar}
+==================================
+The carbon footprint of the average consumption by food group has been calculated for at least 130 countries. These calculations are based on food balance sheets and population data available from the Food and Agriculture Organization of the United Nations (FAO).
+These visualizations intend to compare the dietary sources of CO2 of non-animal based products to animal-based products and the differences in the food production across countries.
 
+Draft
+=========================
 Column {data-width=650}
 -----------------------------------------------------------------------
+```{r data}
+initial <- import(here("data", "food_carbon_footprint_data.xlsx")) %>% 
+  clean_names() %>%
+    as_tibble()
 
+subset <- initial %>% 
+  mutate(ranking = as.numeric(ranking)) %>% 
+  filter(ranking < 7 |country == "average"| country =="Canada"|country =="Japan"
+         |country == "Germany"|country =="Mexico"|country =="South Korea"|country =="China")
+
+#line plot work: CO2/person/year produced by country
+
+initial_longer <- subset %>%
+  select("ranking", "country","total_animal_products", "total_nonanimal_products", 
+         "animal_nonanimal_difference") %>% 
+  pivot_longer(cols = 3:5,
+               names_to = "product",
+               values_to = "CO2_person_year")
+
+nadiff <- subset %>%
+  arrange(desc(animal_nonanimal_difference)) %>% 
+  select("ranking", "country", "animal_nonanimal_difference") %>% 
+  pivot_longer(cols = 3,
+               names_to = "product",
+               values_to = "CO2_person_year")
+
+animal <- subset %>%
+  pivot_longer(cols = 3:9,
+               names_to = "product",
+               values_to = "CO2_person_year")
+
+non_animal <- subset %>%
+  pivot_longer(cols = 11:14,
+               names_to = "product",
+               values_to = "CO2_person_year")
+
+
+```
 ### Chart A
 
-```{r}
+```{r plot drafts}
+  #plot1: animal products
+#draft
 
+a1 <- animal %>% 
+  ggplot(aes(product, CO2_person_year, group=country)) +
+  geom_line(aes(color = country))
+a1
 ```
 
 Column {data-width=350}
@@ -33,4 +94,41 @@ Column {data-width=350}
 ```{r}
 
 ```
+Final
+=========================
+Column {data-width=650}
+-----------------------------------------------------------------------
 
+### Chart D
+
+```{r plot final animal}
+  #plot1: animal products
+a2 <- animal %>% 
+  ggplot(aes(product, CO2_person_year, group=country)) +
+  geom_line(aes(color = country), size = 1) +
+  gghighlight(country == "average" |country == "USA" | country =="Canada"| 
+                country =="Japan") +
+  scale_color_viridis_d() +
+  scale_x_discrete(expand = c(0, 0)) +
+  labs(title = "CO2/person/year for animal products",
+       subtitle = "",
+       x = "animal product",
+       y = "Co2/person/year (in Kg)") +
+  theme_minimal()
+ggplotly(a2, tooltip = c("country","product","CO2_person_year"))
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart E
+
+```{r}
+
+```
+
+### Chart F
+
+```{r}
+
+```
