@@ -26,7 +26,7 @@ Data Source {.sidebar}
 The carbon footprint of the average consumption by food group has been calculated for at least 130 countries. These calculations are based on food balance sheets and population data available from the Food and Agriculture Organization of the United Nations (FAO).
 These visualizations intend to compare the dietary sources of CO2 of non-animal based products to animal-based products and the differences in the food production across countries.
 
-Draft
+Animal products
 =========================
 Column {data-width=650}
 -----------------------------------------------------------------------
@@ -68,38 +68,7 @@ non_animal <- subset %>%
 
 
 ```
-### Chart A
-
-```{r plot drafts}
-  #plot1: animal products
-#draft
-
-a1 <- animal %>% 
-  ggplot(aes(product, CO2_person_year, group=country)) +
-  geom_line(aes(color = country))
-a1
-```
-
-Column {data-width=350}
------------------------------------------------------------------------
-
-### Chart B
-
-```{r}
-
-```
-
-### Chart C
-
-```{r}
-
-```
-Final
-=========================
-Column {data-width=650}
------------------------------------------------------------------------
-
-### Chart D
+### Final plot 1
 
 ```{r plot final animal}
   #plot1: animal products
@@ -121,7 +90,68 @@ ggplotly(a2, tooltip = c("country","product","CO2_person_year"))
 Column {data-width=350}
 -----------------------------------------------------------------------
 
-### Chart E
+### Initial plot 1
+
+```{r plot drafts}
+  #plot1: animal products
+#draft
+
+a1 <- animal %>% 
+  ggplot(aes(product, CO2_person_year, group=country)) +
+  geom_line(aes(color = country))
+a1
+
+```
+
+### Version 2
+
+```{r plot v2 animal}
+  #plot1: animal products
+a2 <- animal %>% 
+  ggplot(aes(product, CO2_person_year, group=country)) +
+  geom_line(aes(color = country), size = 1) +
+  gghighlight(country == "average" |country == "USA" | country =="Canada"| 
+                country =="Japan") +
+  scale_color_viridis_d() +
+  scale_x_discrete(expand = c(0, 0)) +
+  labs(title = "CO2/person/year for animal products",
+       subtitle = "",
+       x = "animal product",
+       y = "Co2/person/year (in Kg)") +
+  theme_minimal()
+a2
+
+```
+
+Non-animal products
+=========================
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart D
+
+```{r plot final non-animal}
+  #plot2: non-animal products
+#final
+na2 <- non_animal %>% 
+  ggplot(aes(product, CO2_person_year, group=country)) +
+  geom_line(aes(color = country), size = 1) +
+  gghighlight(country == "average" |country == "USA" | country =="Canada"| 
+                country =="Japan") +
+  scale_color_viridis_d() +
+  scale_x_discrete(expand = c(0, 0)) +
+  labs(title = "CO2/person/year for non-animal products",
+       subtitle = "",
+       x = "non-animal product",
+       y = "Co2/person/year (in Kg)") +
+  theme_minimal()
+ggplotly(na2, tooltip = c("country","product","CO2_person_year"))
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Initial non-animal
 
 ```{r}
 
@@ -131,4 +161,31 @@ Column {data-width=350}
 
 ```{r}
 
+```
+Difference between animal and non-animal products
+=========================
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Difference
+
+Difference between the CO2 production of animal product and non-animal product, over a year. A low value means that a larger proportion of the population feeds on plant products which have a better carbon emission footprint.
+```{r plot final difference}
+
+  #plot3: difference between animal and non-animal products
+#final
+
+d2 <- nadiff %>% 
+  ggplot(aes(CO2_person_year, reorder(country, CO2_person_year))) +
+  geom_col(aes(fill = country)) +
+  geom_col(data = filter(nadiff, country == "average" |country == "USA"),
+           fill = "#C55644") + 
+  scale_fill_viridis_d() +
+  labs(title = "Animal v. Non-Animal Products difference",
+       subtitle = "",
+       x = "Co2/person/year (Kg)",
+       y = "") +
+  theme_minimal() +
+  theme(legend.position = "none")
+ggplotly(d2, tooltip = c("CO2_person_year"))
 ```
