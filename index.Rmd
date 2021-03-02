@@ -6,6 +6,8 @@ output:
     orientation: columns
     vertical_layout: fill
     source_code: https://github.com/rlatimer/Project.git
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -25,6 +27,8 @@ Data Source {.sidebar}
 ==================================
 The carbon footprint of the average consumption by food group has been calculated for at least 130 countries. These calculations are based on food balance sheets and population data available from the Food and Agriculture Organization of the United Nations (FAO).
 These visualizations intend to compare the dietary sources of CO2 of non-animal based products to animal-based products and the differences in the food production across countries.
+
+<!-- Very cool data set! I think something helpful to put in the data source description would be an explanation of what the products mean, e.g., a 37.2 pork score means that that country's pork industry produces 37.2 kg co2/per person/ year -->
 
 Animal products
 =========================
@@ -76,15 +80,19 @@ a2 <- animal %>%
   ggplot(aes(product, CO2_person_year, group=country)) +
   geom_line(aes(color = country), size = 1) +
   gghighlight(country == "average" |country == "USA" | country =="Canada"| 
-                country =="Japan") +
+                country =="Japan") + #The highlight looks great here! I'm curious about why you chose these countries to highlight. You can annotate your figures with a ">" symbol (see https://rmarkdown.rstudio.com/flexdashboard/using.html#text_annotations)- I think it would be really helpful to hear about what each plot means
   scale_color_viridis_d() +
   scale_x_discrete(expand = c(0, 0)) +
   labs(title = "CO2/person/year for animal products",
        subtitle = "",
-       x = "animal product",
+       x = "animal product", # I think you could omit this label
        y = "Co2/person/year (in Kg)") +
   theme_minimal()
 ggplotly(a2, tooltip = c("country","product","CO2_person_year"))
+
+# Thanks for teaching me about this function ggplotly.That's so cool that it's interactive!! It looks like using it also gets rid of the labels. I agree that that is the right move here since the labels are all bunched together and it's difficult to see which is which
+
+#One aspect of this plot that I find a bit confusing is the use of a line when the x-axis is discrete, e.g., the middle of beef & eggs is shown a value even though that's not possible. I think dots or bars that are sorted would remove that artifact (although you may not be able to express as many countries with a different method so it's a tough call)
 ```
 
 Column {data-width=350}
@@ -146,6 +154,10 @@ na2 <- non_animal %>%
        y = "Co2/person/year (in Kg)") +
   theme_minimal()
 ggplotly(na2, tooltip = c("country","product","CO2_person_year"))
+
+# Since these plots are very similar, one thing you could do is facet wrap and have animal products on one side and non-animal products on the other side. That way you can directly compare how much non-animal products contribute to co2 vs animal products (just make sure that the y axis is the same so that it is not misleading)
+
+
 ```
 
 Column {data-width=350}
@@ -186,6 +198,10 @@ d2 <- nadiff %>%
        x = "Co2/person/year (Kg)",
        y = "") +
   theme_minimal() +
-  theme(legend.position = "none")
+  theme(legend.position = "none") #Definitely agree about no legend here
 ggplotly(d2, tooltip = c("CO2_person_year"))
+
+# One thing that would be super cool for your final draft is to use gganimate to compare across non-animal and animal since this is a difference score. So you could show non-animal and then it transitions to the animal products and you will be able to see the growth. This will take some calculating and maneuvering though because it looks like total_animal_products and non_nonanimal_animal are in different units?? .. but might be worth trying out!! (Also.. if you're feeling extra adventurous you might want to try mapping it since you have 131 countries and that could be really cool to look at!)
+
+# Again, great job making this plot interactive! I also loved that you ranked it because you can easily see who has the most animal non-animal difference. I'm seeing this artifact of some colors being sort of similar to others (like Argentina and Albania) because of how many colors there are. Maybe you could do some sort of highlight like you did in the last graph? I think the average would be helpful to stick out as a color so you can see who is above average and who is below average 
 ```
