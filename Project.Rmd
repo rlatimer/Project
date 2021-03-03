@@ -102,7 +102,7 @@ a2 <- animal %>%
   scale_color_viridis_d() +
   scale_x_discrete(expand = c(0, 0)) +
   labs(title = "CO2/person/year for animal products",
-       subtitle = "",
+       subtitle = "", #Would be helpful to include subtitle for more context (for all graphs)
        x = "animal product",
        y = "Co2/person/year (in Kg)") +
   theme_minimal()
