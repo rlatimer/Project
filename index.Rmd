@@ -23,7 +23,8 @@ library(plotly)
 ```
 Data Source {.sidebar}
 ==================================
-The carbon footprint of the average consumption by food group has been calculated for at least 130 countries. These calculations are based on food balance sheets and population data available from the Food and Agriculture Organization of the United Nations (FAO).
+The carbon footprint of food industry varies by country. These data show the CO2 produced  per capita for each food type for 130 countries. These calculations are based on food balance sheets and population data available from the Food and Agriculture Organization of the United Nations (FAO).
+
 These visualizations intend to compare the dietary sources of CO2 of non-animal based products to animal-based products and the differences in the food production across countries.
 
 Animal products
