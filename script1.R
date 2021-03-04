@@ -19,6 +19,8 @@ subset <- initial %>%
   filter(ranking < 7 |country == "average"| country =="Canada"|country =="Japan"
          |country == "Germany"|country =="Mexico"|country =="South Korea"|country =="China")
 
+#Im not too clear on the filtering out top 10 distinction, is this by ranking or highest value of one of the columns? 
+
 #line plot work: CO2/person/year produced by country
 
 initial_longer <- subset %>%
@@ -45,6 +47,8 @@ non_animal <- subset %>%
                names_to = "product",
                values_to = "CO2_person_year")
 
+#Nice use of pivot_longers! 
+
   #plot1: animal products
 #draft
 
@@ -67,7 +71,9 @@ a2 <- animal %>%
   theme_minimal()
 a2 
 
-#doesn't work as intended yet:
+#Nice plot! The (global?) average value is a nice base line but it could be mistaken for the average values that are plotted?
+#But the color distinction makes the countries of interest very salient! 
+
 ggplotly(a2, tooltip = c("country","product","CO2_person_year"))
 
   #plot2: non-animal products
@@ -93,7 +99,11 @@ na2
 
 ggplotly(na2, tooltip = c("country","product","CO2_person_year"))
 
-  #plot3: difference between animal and non-animal products
+#The color distinction is nice as always, tho is there a reason for the organiation of the x variables? 
+#Ordering x variables from the average high to low values may be an alternative visualisation and show which 
+#countries produce more CO2/Persno/year/Product? compared to the average, I'm not sure if I'm makeing sense so please ignore if not.  
+
+#plot3: difference between animal and non-animal products
 #draft
 d1 <- nadiff %>% 
   ggplot(aes(CO2_person_year, country)) +
@@ -115,6 +125,8 @@ d2 <- nadiff %>%
   theme(legend.position = "none")
 d2
 ggplotly(d2, tooltip = c("CO2_person_year"))
+
+#Great color scheme, especially the top 3 dcountries being a shade darker draws attention
 
 #not currently using
 #geographic plot work
