@@ -7,6 +7,8 @@ library(maps)
 library(dplyr)
 library(gghighlight)
 library(plotly)
+library(RColorBrewer)
+#install.packages("RColorBrewer")
 
 initial <- import(here("data", "food_carbon_footprint_data.xlsx")) %>% 
   clean_names() %>%
@@ -56,17 +58,21 @@ a1
 #final
 a2 <- animal %>% 
   ggplot(aes(product, CO2_person_year, group=country)) +
-  geom_line(aes(color = country), size = 1) +
+  geom_line(aes(linetype=country, color = country), size = 1) +
+  scale_linetype_manual(values=c("solid","solid","solid","twodash","solid",
+                                 "solid","solid","solid","solid","solid",
+                                 "solid","solid","solid")) +
   gghighlight(country == "average" |country == "USA" | country =="Canada"| country =="Japan") +
-  scale_color_viridis_d() +
+
+   scale_color_viridis_d() +
   scale_x_discrete(expand = c(0, 0)) +
   labs(title = "CO2/person/year for animal products",
        subtitle = "",
        x = "animal product",
        y = "Co2/person/year (in Kg)") +
   theme_minimal()
-a2 
-
+ a2
+ 
 #doesn't work as intended yet:
 ggplotly(a2, tooltip = c("country","product","CO2_person_year"))
 
@@ -80,7 +86,10 @@ na1
 #final
 na2 <- non_animal %>% 
   ggplot(aes(product, CO2_person_year, group=country)) +
-  geom_line(aes(color = country), size = 1) +
+  geom_line(aes(linetype=country, color = country), size = 1) +
+  scale_linetype_manual(values=c("solid","solid","solid","twodash","solid",
+                                 "solid","solid","solid","solid","solid",
+                                 "solid","solid","solid")) +
   gghighlight(country == "average" |country == "USA" | country =="Canada"| country =="Japan") +
   scale_color_viridis_d() +
   scale_x_discrete(expand = c(0, 0)) +
@@ -100,12 +109,18 @@ d1 <- nadiff %>%
   geom_col(aes(fill = country))
 d1
 #final
+colourCount = length(unique(nadiff$country))
+getPalette = colorRampPalette(brewer.pal(13, "Set1"))
+
 
 d2 <- nadiff %>% 
   ggplot(aes(CO2_person_year, reorder(country, CO2_person_year))) +
   geom_col(aes(fill = country)) +
-  geom_col(data = filter(nadiff, country == "average" |country == "USA"),
-           fill = "#C55644") + 
+#  geom_col(aes(fill=getPalette(colourCount)))) +
+  geom_col(data = filter(nadiff, country == "USA"),
+           fill =  "#C55644") + 
+  geom_col(data = filter(nadiff, country == "average"),
+           fill = "#ccccb7") + 
   scale_fill_viridis_d() +
   labs(title = "Animal v. Non-Animal Products difference",
        subtitle = "",
@@ -131,7 +146,7 @@ data_map<-full_join(initial, country_data)
 
 #plot of difference by country on map
 ggplot(data_map, aes(long, lat))+
-  geom_polygon(aes(group=group, color = "red", fill=animal_nonanimal_difference))
+  geom_polygon(aes(group=group, color = "black", fill=animal_nonanimal_difference))
                +coord_map("albers", at0 = 45.5, lat1 = 29.5)
 
 ggplot(initial, aes(total_animal_products,country)) +
