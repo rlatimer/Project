@@ -189,8 +189,7 @@ na2
 
 Difference between animal and non-animal products {data-orientation=rows}
 =========================
-Row 
-
+Row {vertical_layout: scroll}
 -----------------------------------------------------------------------
 
 ### Difference
