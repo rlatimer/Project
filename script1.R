@@ -116,21 +116,20 @@ getPalette = colorRampPalette(brewer.pal(13, "Set1"))
 
 d2 <- nadiff %>% 
   ggplot(aes(CO2_person_year, reorder(country, CO2_person_year))) +
-  geom_col(aes(fill = country)) +
-#  geom_col(aes(fill=getPalette(colourCount)))) +
-  geom_col(data = filter(nadiff, country == "USA"),
-           fill =  "#C55644") + 
-  geom_col(data = filter(nadiff, country == "average"),
-           fill = "#ccccb7") + 
-  scale_fill_viridis_d() +
+  geom_col(aes(fill = CO2_person_year)) +
+  scale_fill_continuous_diverging(
+    "Green-Brown",
+    rev = FALSE,
+    mid = mean(initial$animal_nonanimal_difference, na.rm = TRUE)) +
   labs(title = "Animal v. Non-Animal Products difference",
        subtitle = "",
        x = "Co2/person/year (Kg)",
        y = "") +
-  theme_minimal() +
-  theme(legend.position = "none")
+  theme_minimal()
+
 d2
 ggplotly(d2, tooltip = c("CO2_person_year"))
+
 
 #geographic plot work
 #bring in map

@@ -192,29 +192,27 @@ Difference between animal and non-animal products {data-orientation=rows}
 Row {vertical_layout: scroll}
 -----------------------------------------------------------------------
 
-### Difference
+### Difference between the CO2 production of animal product and non-animal product, over a year. A low value means that a larger proportion of the population feeds on plant products which have a better carbon emission footprint.
 
-Difference between the CO2 production of animal product and non-animal product, over a year. A low value means that a larger proportion of the population feeds on plant products which have a better carbon emission footprint.
 
 ```{r plot final difference}
 
   #plot3: difference between animal and non-animal products
 #final
-
 d2 <- nadiff %>% 
   ggplot(aes(CO2_person_year, reorder(country, CO2_person_year))) +
-  geom_col(aes(fill = country)) +
-  geom_col(data = filter(nadiff, country == "USA"),
-           fill =  "#C55644") + 
-  geom_col(data = filter(nadiff, country == "average"),
-           fill = "#ccccb7") + 
-  scale_fill_viridis_d() +
-  labs(title = "Animal v. Non-Animal Products difference",
+  geom_col(aes(fill = CO2_person_year)) +
+  scale_fill_continuous_diverging(
+    "Green-Brown",
+    rev = FALSE,
+    mid = mean(initial$animal_nonanimal_difference, na.rm = TRUE)) +
+  labs(title = "",
        subtitle = "",
        x = "Co2/person/year (Kg)",
        y = "") +
-  theme_minimal() +
-  theme(legend.position = "none")
+  theme_minimal()
+
+d2
 ggplotly(d2, tooltip = c("CO2_person_year"))
 ```
 
@@ -251,7 +249,8 @@ m1 <- m0 + geom_polygon(color = "gray90", size = 0.1) +
 m2 <- m1 + scale_fill_continuous_diverging(
   "Green-Brown",
   rev = FALSE,
-  mid = mean(initial$animal_nonanimal_difference, na.rm = TRUE))
+  mid = mean(initial$animal_nonanimal_difference, na.rm = TRUE)) +
+  theme_minimal()
 
 ggplotly(m2)
 ```
