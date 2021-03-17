@@ -8,7 +8,9 @@ library(dplyr)
 library(gghighlight)
 library(plotly)
 library(RColorBrewer)
+library(colorspace)
 #install.packages("RColorBrewer")
+#install.packages("colorspace")
 
 initial <- import(here("data", "food_carbon_footprint_data.xlsx")) %>% 
   clean_names() %>%
@@ -130,7 +132,6 @@ d2 <- nadiff %>%
 d2
 ggplotly(d2, tooltip = c("CO2_person_year"))
 
-#not currently using
 #geographic plot work
 #bring in map
 country_data <- map_data("world") %>% 
@@ -144,10 +145,20 @@ data_map<-full_join(initial, country_data)
 #now countries without data are filled grey
 
 #plot of difference by country on map
-ggplot(data_map, aes(long, lat))+
-  geom_polygon(aes(group=group, color = "black", fill=animal_nonanimal_difference))
-               +coord_map("albers", at0 = 45.5, lat1 = 29.5)
 
+m0 <- ggplot(data = data_map,
+             mapping = aes(x = long, y = lat,
+                           group = group, fill = animal_nonanimal_difference))
+m1 <- m0 + geom_polygon(color = "gray90", size = 0.1) +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) 
+m2 <- m1 + scale_fill_continuous_diverging(
+  "Blue-Red 3",
+  rev = FALSE,
+  mid = mean(initial$animal_nonanimal_difference, na.rm = TRUE))
+
+ggplotly(m2)
+
+#these aren't being used
 ggplot(initial, aes(total_animal_products,country)) +
   geom_point(aes(color=ranking))
   

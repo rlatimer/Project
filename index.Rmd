@@ -20,6 +20,7 @@ library(maps)
 library(dplyr)
 library(gghighlight)
 library(plotly)
+library(colorspace)
 ```
 Data Source {.sidebar}
 ==================================
@@ -194,6 +195,7 @@ Row {vertical_layout: scroll}
 ### Difference
 
 Difference between the CO2 production of animal product and non-animal product, over a year. A low value means that a larger proportion of the population feeds on plant products which have a better carbon emission footprint.
+
 ```{r plot final difference}
 
   #plot3: difference between animal and non-animal products
@@ -222,6 +224,9 @@ Column {data-width=650} vertical_layout: scroll
 ### Difference Mapped
 
 Mapping the difference between the CO2 production of animal product and non-animal product, over a year. A low value means that a larger proportion of the population feeds on plant products which have a better carbon emission footprint.
+
+
+The average difference between CO2 production of animal and non-animal products for the countries in this study is 700 kg. Countries with above average CO2 are shaded in brown;  those with below average CO2 are shaded in blue-green.
 ```{r draft map}
 
   #draft
@@ -238,8 +243,15 @@ data_map<-full_join(initial, country_data)
 #now countries without data are filled grey
 
 #plot of difference by country on map
-m <- ggplot(data_map, aes(long, lat)) +
-  geom_polygon(aes(group=group, color = "black", fill=animal_nonanimal_difference)) +
-               coord_map("albers", at0 = 45.5, lat1 = 29.5) 
-ggplotly(m)
+m0 <- ggplot(data = data_map,
+             mapping = aes(x = long, y = lat,
+                           group = group, fill = animal_nonanimal_difference))
+m1 <- m0 + geom_polygon(color = "gray90", size = 0.1) +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) 
+m2 <- m1 + scale_fill_continuous_diverging(
+  "Green-Brown",
+  rev = FALSE,
+  mid = mean(initial$animal_nonanimal_difference, na.rm = TRUE))
+
+ggplotly(m2)
 ```
