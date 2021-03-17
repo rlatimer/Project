@@ -152,7 +152,7 @@ m0 <- ggplot(data = data_map,
 m1 <- m0 + geom_polygon(color = "gray90", size = 0.1) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45) 
 m2 <- m1 + scale_fill_continuous_diverging(
-  "Blue-Red 3",
+  "Green-Brown",
   rev = FALSE,
   mid = mean(initial$animal_nonanimal_difference, na.rm = TRUE))
 
