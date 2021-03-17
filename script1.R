@@ -56,25 +56,26 @@ a1 <- animal %>%
 a1
 
 #final
-a2 <- animal %>% 
-  ggplot(aes(product, CO2_person_year, group=country)) +
-  geom_line(aes(linetype=country, color = country), size = 1) +
-  scale_linetype_manual(values=c("solid","solid","solid","twodash","solid",
-                                 "solid","solid","solid","solid","solid",
-                                 "solid","solid","solid")) +
-  gghighlight(country == "average" |country == "USA" | country =="Canada"| country =="Japan") +
 
-   scale_color_viridis_d() +
+#vector for highlighted countries
+focus <- c("average","USA","Canada","Japan")
+
+a2 <- animal %>% 
+  ggplot(aes(product, CO2_person_year, group=country),show.legend = FALSE) +
+  geom_line(color="grey",show.legend = FALSE) + 
+  geom_line(aes(color = country),
+            data = filter(animal, country %in% focus)) + 
+  scale_color_viridis_d() +
   scale_x_discrete(expand = c(0, 0)) +
   labs(title = "CO2/person/year for animal products",
        subtitle = "",
        x = "animal product",
        y = "Co2/person/year (in Kg)") +
   theme_minimal()
- a2
+a2
+ggplotly(a2, tooltip = c("country","product","CO2_person_year")) 
+
  
-#doesn't work as intended yet:
-ggplotly(a2, tooltip = c("country","product","CO2_person_year"))
 
   #plot2: non-animal products
 #draft
@@ -85,12 +86,10 @@ na1
 
 #final
 na2 <- non_animal %>% 
-  ggplot(aes(product, CO2_person_year, group=country)) +
-  geom_line(aes(linetype=country, color = country), size = 1) +
-  scale_linetype_manual(values=c("solid","solid","solid","twodash","solid",
-                                 "solid","solid","solid","solid","solid",
-                                 "solid","solid","solid")) +
-  gghighlight(country == "average" |country == "USA" | country =="Canada"| country =="Japan") +
+  ggplot(aes(product, CO2_person_year, group=country),show.legend = FALSE) +
+  geom_line(color="grey",show.legend = FALSE) +
+  geom_line(aes(color = country),
+            data = filter(non_animal, country %in% focus)) + 
   scale_color_viridis_d() +
   scale_x_discrete(expand = c(0, 0)) +
   labs(title = "CO2/person/year for non-animal products",
@@ -99,8 +98,8 @@ na2 <- non_animal %>%
        y = "Co2/person/year (in Kg)") +
   theme_minimal()
 na2
-
 ggplotly(na2, tooltip = c("country","product","CO2_person_year"))
+ 
 
   #plot3: difference between animal and non-animal products
 #draft
