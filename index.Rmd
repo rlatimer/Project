@@ -3,8 +3,8 @@ title: "Project"
 output: 
 #runtime: shiny
   flexdashboard::flex_dashboard:
-    orientation: columns
-    vertical_layout: scroll
+  #  orientation: columns
+  #  vertical_layout: fill
     source_code: https://github.com/rlatimer/Project.git
 ---
 
@@ -21,10 +21,11 @@ library(dplyr)
 library(gghighlight)
 library(plotly)
 library(colorspace)
+library(reactable)
 ```
 Data Source {.sidebar}
 ==================================
-The carbon footprint of food industry varies by country. These data show the CO2 produced  per capita for each food type for 130 countries. These calculations are based on food balance sheets and population data available from the Food and Agriculture Organization of the United Nations (FAO).
+The carbon footprint of food industry varies by country. These data show the CO2 produced per capita for each food type for 130 countries. These calculations are based on food balance sheets and population data available from the Food and Agriculture Organization of the United Nations (FAO).
 
 These visualizations intend to compare the dietary sources of CO2 of non-animal based products to animal-based products and the differences in the food production across countries.
 
@@ -32,6 +33,7 @@ Animal products
 =========================
 Column {data-width=650}
 -----------------------------------------------------------------------
+
 ```{r data}
 initial <- import(here("data", "food_carbon_footprint_data.xlsx")) %>% 
   clean_names() %>%
@@ -93,8 +95,17 @@ a2
 ggplotly(a2, tooltip = c("country","product","CO2_person_year"))
 ```
 
-Column {data-width=350}
+
+Column {.tabset .tabset .tabset data-width=350}
 -----------------------------------------------------------------------
+### About
+The initial plot takes the 7 countries that have the biggest contribution of CO2 by diet, and adds the USA, Canada, Mexico, Japan, Germany, South Korea, China, and the average for this data set for comparison.
+
+Version 2 uses gghighlight to call out specific countries and the average CO2/person/year produced
+on average.
+
+The final version removes the labels (they were cluttering the image) and is interactive: you can see the CO2 produced and zoom in to areas that get crowded.
+
 
 ### Initial animal
 
@@ -110,7 +121,6 @@ a1
 ```
 
 ### Version 2: CO2 produced by animal products
-gghighlight to call out specific countries and the average
 
 ```{r plot v2 animal}
   #plot1: animal products
@@ -156,8 +166,15 @@ na2
 ggplotly(na2, tooltip = c("country","product","CO2_person_year"))
 ```
 
-Column {data-width=350}
+Column {.tabset .tabset .tabset data-width=350}
 -----------------------------------------------------------------------
+### About
+The initial plot takes the 7 countries that have the biggest contribution of CO2 by diet, and adds the USA, Canada, Mexico, Japan, Germany, South Korea, China, and the average for this data set for comparison.
+
+Version 2 uses gghighlight to call out specific countries and the average CO2/person/year produced
+on average.
+
+The final version removes the labels (they were cluttering the image) and is interactive: you can see the CO2 produced and zoom in to areas that get crowded.
 
 ### Initial non-animal
 
@@ -169,7 +186,6 @@ na1
 ```
 
 ### Version 2: non-animal
-gghighlight to call out specific countries and the average
 
 ```{r plot non-animal v2}
   #plot2: non-animal products
@@ -239,7 +255,7 @@ country_data <- map_data("world") %>%
 data_map<-full_join(initial, country_data)
 
 #maybe use a map type other than albers; mercator?
-#need outlines for all countries; full join? 
+#need outlines for all countries
 #now countries without data are filled grey
 
 #plot of difference by country on map
@@ -282,6 +298,53 @@ m0 <- ggplot(data_map, aes(long, lat))+
   geom_polygon(aes(group=group, color = "black", fill=animal_nonanimal_difference)) +
  coord_map("albers", at0 = 45.5, lat1 = 29.5)
 m0
+```
+
+Data
+==================================
+
+Row {data-height=700}
+-----------------------------------
+### Lots of information
+
+```{r table}
+#table
+initial %>% 
+  reactable(
+    searchable = TRUE,
+    filterable = TRUE,
+    columns = list(
+      lamb_goat = colDef(name="lamb/goat"),
+      total_animal_products = colDef(name="Total (animal products)"),
+      total_nonanimal_products = colDef(name="Total (non-animal products)"),
+      animal_nonanimal_difference = colDef(name="Difference (Animal-Non-animal)")
+    ),
+    defaultPageSize = 15
+)
+
 
 
 ```
+
+Row {.tabset .tabset-fade data-height=300}
+-----------------------------------
+### About
+There is so much data, a table felt necessary. Initially, I used mostly default settings, unaware of the endless possibilities. Then I added search and filter options and allowed more data per page (14 pages seemed like too many...). 
+
+
+### Draft
+
+```{r draft table}
+#table
+initial %>% 
+  reactable(
+    columns = list(
+      lamb_goat = colDef(name="lamb/goat"),
+      total_animal_products = colDef(name="Total (animal products)"),
+      total_nonanimal_products = colDef(name="Total (non-animal products)"),
+      animal_nonanimal_difference = colDef(name="Difference (Animal-Non-animal)")
+    ),
+)
+
+```
+  

@@ -9,8 +9,10 @@ library(gghighlight)
 library(plotly)
 library(RColorBrewer)
 library(colorspace)
+library(reactable)
 #install.packages("RColorBrewer")
 #install.packages("colorspace")
+#install.packages("reactable")
 
 initial <- import(here("data", "food_carbon_footprint_data.xlsx")) %>% 
   clean_names() %>%
@@ -190,16 +192,28 @@ m2 <- m1 + scale_fill_continuous_diverging(
 
 ggplotly(m2)
 
+#table draft
+initial %>% 
+  reactable(
+    columns = list(
+      lamb_goat = colDef(name="lamb/goat"),
+      total_animal_products = colDef(name="Total (animal products)"),
+      total_nonanimal_products = colDef(name="Total (non-animal products)"),
+      animal_nonanimal_difference = colDef(name="Difference (Animal-Non-animal)")
+    ),
+  )
 
+#table final
+initial %>% 
+  reactable(
+    searchable = TRUE,
+    filterable = TRUE,
+    columns = list(
+      lamb_goat = colDef(name="lamb/goat"),
+      total_animal_products = colDef(name="Total (animal products)"),
+      total_nonanimal_products = colDef(name="Total (non-animal products)"),
+      animal_nonanimal_difference = colDef(name="Difference (Animal-Non-animal)")
+    ),
+    defaultPageSize = 15
+)
 
-
-
-
-
-#these aren't being used
-ggplot(initial, aes(total_animal_products,country)) +
-  geom_point(aes(color=ranking))
-  
-ggplot(initial, aes(total_animal_products,ranking)) +
-  geom_point() +
-  labs(title = "kg CO2 per person")
