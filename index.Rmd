@@ -305,7 +305,7 @@ Data
 
 Row {data-height=700}
 -----------------------------------
-### Lots of information
+### Lots of information. All data in Kg of CO2 per person per year.
 
 ```{r table}
 #table
