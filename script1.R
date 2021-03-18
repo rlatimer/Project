@@ -122,8 +122,9 @@ d2 <- nadiff %>%
     rev = FALSE,
     mid = mean(initial$animal_nonanimal_difference, na.rm = TRUE)) +
   labs(title = "Animal v. Non-Animal Products difference",
+       fill =  "CO2/person/year (Kg)",
        subtitle = "",
-       x = "Co2/person/year (Kg)",
+       x = "",
        y = "") +
   theme_minimal()
 

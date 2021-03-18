@@ -206,9 +206,10 @@ d2 <- nadiff %>%
     "Green-Brown",
     rev = FALSE,
     mid = mean(initial$animal_nonanimal_difference, na.rm = TRUE)) +
-  labs(title = "",
+  labs(title = "Animal v. Non-Animal Products difference",
+       fill =  "CO2/person/year (Kg)",
        subtitle = "",
-       x = "Co2/person/year (Kg)",
+       x = "",
        y = "") +
   theme_minimal()
 
