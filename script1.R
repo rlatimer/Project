@@ -144,7 +144,33 @@ data_map<-full_join(initial, country_data)
 #need outlines for all countries; full join? 
 #now countries without data are filled grey
 
+#draft
 #plot of difference by country on map
+m0 <- ggplot(data_map, aes(long, lat))+
+  geom_polygon(aes(group=group, color = "black", fill=animal_nonanimal_difference)) +
+ coord_map("albers", at0 = 45.5, lat1 = 29.5)
+m0
+
+#final
+m0 <- ggplot(data = data_map,
+             mapping = aes(x = long, y = lat,
+                           group = group, fill = animal_nonanimal_difference))
+m1 <- m0 + geom_polygon(color = "gray90", size = 0.1) +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) 
+m2 <- m1 + scale_fill_continuous_diverging(
+  "Green-Brown",
+  rev = FALSE,
+  mid = mean(initial$animal_nonanimal_difference, na.rm = TRUE)) +
+  labs(title = "",
+       fill =  "CO2/person/year (Kg)",
+       subtitle = "",
+       x = "",
+       y = "") +
+  theme_minimal()
+
+
+
+#final plot of difference by country on map
 
 m0 <- ggplot(data = data_map,
              mapping = aes(x = long, y = lat,
@@ -154,9 +180,21 @@ m1 <- m0 + geom_polygon(color = "gray90", size = 0.1) +
 m2 <- m1 + scale_fill_continuous_diverging(
   "Green-Brown",
   rev = FALSE,
-  mid = mean(initial$animal_nonanimal_difference, na.rm = TRUE))
+  mid = mean(initial$animal_nonanimal_difference, na.rm = TRUE)) +
+  labs(title = "Animal v. Non-Animal Products difference",
+       fill =  "CO2/person/year (Kg)",
+       subtitle = "",
+       x = "",
+       y = "") +
+  theme_minimal()
 
 ggplotly(m2)
+
+
+
+
+
+
 
 #these aren't being used
 ggplot(initial, aes(total_animal_products,country)) +

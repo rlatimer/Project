@@ -4,7 +4,7 @@ output:
 #runtime: shiny
   flexdashboard::flex_dashboard:
     orientation: columns
-    vertical_layout: fill
+    vertical_layout: scroll
     source_code: https://github.com/rlatimer/Project.git
 ---
 
@@ -70,7 +70,7 @@ non_animal <- subset %>%
 
 
 ```
-### Final plot 1
+### Final
 
 ```{r plot final animal}
   #plot1: animal products
@@ -96,7 +96,7 @@ ggplotly(a2, tooltip = c("country","product","CO2_person_year"))
 Column {data-width=350}
 -----------------------------------------------------------------------
 
-### Initial plot 1
+### Initial animal
 
 ```{r plot v1 animal}
   #plot1: animal products
@@ -109,7 +109,8 @@ a1
 
 ```
 
-### Version 2
+### Version 2: CO2 produced by animal products
+gghighlight to call out specific countries and the average
 
 ```{r plot v2 animal}
   #plot1: animal products
@@ -134,7 +135,7 @@ Non-animal products
 Column {data-width=650}
 -----------------------------------------------------------------------
 
-### Final plot 2
+### Final
 
 ```{r plot final non-animal}
   #plot2: non-animal products
@@ -158,7 +159,7 @@ ggplotly(na2, tooltip = c("country","product","CO2_person_year"))
 Column {data-width=350}
 -----------------------------------------------------------------------
 
-### Initial plot 2 (non-animal)
+### Initial non-animal
 
 ```{r plot v1 non-animal}
 na1 <- non_animal %>% 
@@ -167,7 +168,8 @@ na1 <- non_animal %>%
 na1
 ```
 
-### Version 2
+### Version 2: non-animal
+gghighlight to call out specific countries and the average
 
 ```{r plot non-animal v2}
   #plot2: non-animal products
@@ -187,7 +189,7 @@ na2 <- non_animal %>%
 na2
 ```
 
-Difference between animal and non-animal products {data-orientation=rows}
+Difference between the CO2 produced by animal and non-animal products {data-orientation=rows}
 =========================
 Row {vertical_layout: scroll}
 -----------------------------------------------------------------------
@@ -206,18 +208,17 @@ d2 <- nadiff %>%
     "Green-Brown",
     rev = FALSE,
     mid = mean(initial$animal_nonanimal_difference, na.rm = TRUE)) +
-  labs(title = "Animal v. Non-Animal Products difference",
+  labs(title = "",
        fill =  "CO2/person/year (Kg)",
        subtitle = "",
        x = "",
        y = "") +
   theme_minimal()
 
-d2
 ggplotly(d2, tooltip = c("CO2_person_year"))
 ```
 
-Column {data-width=650} vertical_layout: scroll
+Row {.tabset .tabset-fade}
 -----------------------------------------------------------------------
 
 ### Difference Mapped
@@ -251,7 +252,36 @@ m2 <- m1 + scale_fill_continuous_diverging(
   "Green-Brown",
   rev = FALSE,
   mid = mean(initial$animal_nonanimal_difference, na.rm = TRUE)) +
+    labs(title = "",
+       fill =  "CO2/person/year (Kg)",
+       subtitle = "",
+       x = "",
+       y = "") +
   theme_minimal()
 
 ggplotly(m2)
+```
+
+### Draft map: First attempt at mapping the CO2 difference to the world map. 
+I like the color gradient but would like to change the perspective, country outline, 
+
+and maybe use a divergent color palette. Interactivity would also be neat.
+
+```{r draft 1 map}
+#draft
+#geographic plot work
+#bring in map
+country_data <- map_data("world") %>% 
+  rename(country=region)
+
+#left join initial and country_data by country
+data_map<-full_join(initial, country_data)
+
+
+m0 <- ggplot(data_map, aes(long, lat))+
+  geom_polygon(aes(group=group, color = "black", fill=animal_nonanimal_difference)) +
+ coord_map("albers", at0 = 45.5, lat1 = 29.5)
+m0
+
+
 ```
